@@ -1,0 +1,9 @@
+[package]
+name = "emulator"
+version = "0.1.0"
+authors = ["Dustin Bensing <dustin.bensing@googlemail.com>"]
+
+[dependencies]
+docopt = "*"
+docopt_macros = "*"
+rustc-serialize = "*"  # if you're using `derive(RustcDecodable)`
