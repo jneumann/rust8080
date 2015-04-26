@@ -6,10 +6,8 @@ extern crate docopt;
 
 use std::error::Error;
 use std::fs::{File, OpenOptions};
-use std::io::{BufWriter};
 use std::io::prelude::*;
 use std::path::Path;
-use std::fmt;
 
 docopt!(Args derive Debug, "
   8080 Disassembler – let's you disassemble a 8080 binary
@@ -36,9 +34,9 @@ fn main() {
   }
 }
 
-fn decode_file(input_file_path: String, ouput_file_path: String) {
+fn decode_file(input_file_path: String, output_file_path: String) {
   let input_path = Path::new(&input_file_path);
-  let output_path = Path::new(&ouput_file_path);
+  let output_path = Path::new(&output_file_path);
   let display = input_path.display();
 
   let mut input_file = match File::open(&input_path) {
@@ -49,8 +47,8 @@ fn decode_file(input_file_path: String, ouput_file_path: String) {
   let mut buffer: Vec<u8> = Vec::new();
   let file_size_res = input_file.read_to_end(& mut buffer);
 
-  let mut openOptions = OpenOptions::new();
-  openOptions.write(true).append(true);
+  let mut open_options = OpenOptions::new();
+  open_options.write(true).append(true);
 
   let mut ouput_file = match File::create(output_path) {
     Err(why) => panic!("could not create {}", why),
@@ -59,7 +57,7 @@ fn decode_file(input_file_path: String, ouput_file_path: String) {
 
   if let Ok(file_size) = file_size_res {  
     let mut program_counter = 0;
-    while((program_counter as usize) < file_size) {
+    while (program_counter as usize) < file_size {
       program_counter += disassemble(&buffer, program_counter, &mut ouput_file);
     }
   }
