@@ -1,7 +1,612 @@
-0000 	NOP
-0001 	NOP
-0002 	NOP
-0003 	JMP 	$18d4
-0006 	NOP
-0007 	NOP
-0008 	PUSH 	PSW
+0000: 	NOP
+0001: 	NOP
+0002: 	NOP
+0003: 	JMP 	$18d4
+0006: 	NOP
+0007: 	NOP
+0008: 	PUSH 	PSW
+0009: 	PUSH 	B
+000a: 	PUSH 	D
+000b: 	PUSH 	H
+000c: 	JMP 	$008c
+000f: 	NOP
+0010: 	PUSH 	PSW
+0011: 	PUSH 	B
+0012: 	PUSH 	D
+0013: 	PUSH 	H
+0014: 	MVI 	A, #$80
+0016: 	STA 	$2072
+0019: 	LXI 	H, #$20c0
+001c: 	DCR 	M
+001d: 	CALL 	$17cd
+0020: 	IN 		#$01
+0022: 	RRC
+0023: 	JC 		$0067
+0026: 	LDA 	$20ea
+0029: 	ANA 	A
+002a: 	JZ 		$0042
+002d: 	LDA 	$20eb
+0030: 	CPI 	#$99
+0032: 	JZ 		$003e
+0035: 	ADI 	#$01
+0037: 	DAA 
+0038: 	STA 	$20eb
+003b: 	CALL 	$1947
+003e: 	XRA 	A
+003f: 	STA 	$20ea
+0042: 	LDA 	$20e9
+0045: 	ANA 	A
+0046: 	JZ 		$0082
+0049: 	LDA 	$20ef
+004c: 	ANA 	A
+004d: 	JNZ 	$006f
+0050: 	LDA 	$20eb
+0053: 	ANA 	A
+0054: 	JNZ 	$005d
+0057: 	CALL 	$0abf
+005a: 	JMP 	$0082
+005d: 	LDA 	$2093
+0060: 	ANA 	A
+0061: 	JNZ 	$0082
+0064: 	JMP 	$0765
+0067: 	MVI 	A, #$01
+0069: 	STA 	$20ea
+006c: 	JMP 	$003f
+006f: 	CALL 	$1740
+0072: 	LDA 	$2032
+0075: 	STA 	$2080
+0078: 	CALL 	$0100
+007b: 	CALL 	$0248
+007e: 	CALL 	$0913
+0081: 	NOP
+0082: 	POP 	H 
+0083: 	POP 	D
+0084: 	POP 	B 
+0085: 	POP 	PSW 
+0086: 	EI 
+0087: 	RET 
+0088: 	NOP
+0089: 	NOP
+008a: 	NOP
+008b: 	NOP
+008c: 	XRA 	A
+008d: 	STA 	$2072
+0090: 	LDA 	$20e9
+0093: 	ANA 	A
+0094: 	JZ 		$0082
+0097: 	LDA 	$20ef
+009a: 	ANA 	A
+009b: 	JNZ 	$00a5
+009e: 	LDA 	$20c1
+00a1: 	RRC
+00a2: 	JNC 	$0082
+00a5: 	LXI 	H, #$2020
+00a8: 	CALL 	$024b
+00ab: 	CALL 	$0141
+00ae: 	JMP 	$0082
+00b1: 	CALL 	$0886
+00b4: 	PUSH 	H
+00b5: 	MOV 	A, M
+00b6: 	INX 	H
+00b7: 	MOV 	H, M
+00b8: 	MOV 	L, A
+00b9: 	SHLD 	$2009
+00bc: 	SHLD 	$200b
+00bf: 	POP 	H 
+00c0: 	DCX 	H
+00c1: 	MOV 	A, M
+00c2: 	CPI 	#$03
+00c4: 	JNZ 	$00c8
+00c7: 	DCR 	A
+00c8: 	STA 	$2008
+00cb: 	CPI 	#$fe
+00cd: 	MVI 	A, #$00
+00cf: 	JNZ 	$00d3
+00d2: 	INR 	A
+00d3: 	STA 	$200d
+00d6: 	RET 
+00d7: 	MVI 	A, #$02
+00d9: 	STA 	$21fb
+00dc: 	STA 	$22fb
+00df: 	JMP 	$08e4
+00e2: 	NOP
+00e3: 	NOP
+00e4: 	NOP
+00e5: 	NOP
+00e6: 	NOP
+00e7: 	NOP
+00e8: 	NOP
+00e9: 	NOP
+00ea: 	NOP
+00eb: 	NOP
+00ec: 	NOP
+00ed: 	NOP
+00ee: 	NOP
+00ef: 	NOP
+00f0: 	NOP
+00f1: 	NOP
+00f2: 	NOP
+00f3: 	NOP
+00f4: 	NOP
+00f5: 	NOP
+00f6: 	NOP
+00f7: 	NOP
+00f8: 	NOP
+00f9: 	NOP
+00fa: 	NOP
+00fb: 	NOP
+00fc: 	NOP
+00fd: 	NOP
+00fe: 	NOP
+00ff: 	NOP
+0100: 	LXI 	H, #$2002
+0103: 	MOV 	A, M
+0104: 	ANA 	A
+0105: 	JNZ 	$1538
+0108: 	PUSH 	H
+0109: 	LDA 	$2006
+010c: 	MOV 	L, A
+010d: 	LDA 	$2067
+0110: 	MOV 	H, A
+0111: 	MOV 	A, M
+0112: 	ANA 	A
+0113: 	POP 	H 
+0114: 	JZ 		$0136
+0117: 	INX 	H
+0118: 	INX 	H
+0119: 	MOV 	A, M
+011a: 	INX 	H
+011b: 	MOV 	B, M
+011c: 	ANI 	#$fe
+011e: 	RLC
+011f: 	RLC
+0120: 	RLC
+0121: 	MOV 	E, A
+0122: 	MVI 	D, #$00
+0124: 	LXI 	H, #$1c00
+0127: 	DAD 	D
+0128: 	XCHG 
+0129: 	MOV 	A, B
+012a: 	ANA 	A
+012b: 	CNZ 	$013b
+012e: 	LHLD 	$200b
+0131: 	MVI 	B, #$10
+0133: 	CALL 	$15d3
+0136: 	XRA 	A
+0137: 	STA 	$2000
+013a: 	RET 
+013b: 	LXI 	H, #$0030
+013e: 	DAD 	D
+013f: 	XCHG 
+0140: 	RET 
+0141: 	LDA 	$2068
+0144: 	ANA 	A
+0145: 	RZ 
+0146: 	LDA 	$2000
+0149: 	ANA 	A
+014a: 	RNZ 
+014b: 	LDA 	$2067
+014e: 	MOV 	H, A
+014f: 	LDA 	$2006
+0152: 	MVI 	D, #$02
+0154: 	INR 	A
+0155: 	CPI 	#$37
+0157: 	CZ 		$01a1
+015a: 	MOV 	L, A
+015b: 	MOV 	B, M
+015c: 	DCR 	B
+015d: 	JNZ 	$0154
+0160: 	STA 	$2006
+0163: 	CALL 	$017a
+0166: 	MOV 	H, C
+0167: 	SHLD 	$200b
+016a: 	MOV 	A, L
+016b: 	CPI 	#$28
+016d: 	JC 		$1971
+0170: 	MOV 	A, D
+0171: 	STA 	$2004
+0174: 	MVI 	A, #$01
+0176: 	STA 	$2000
+0179: 	RET 
+017a: 	MVI 	D, #$00
+017c: 	MOV 	A, L
+017d: 	LXI 	H, #$2009
+0180: 	MOV 	B, M
+0181: 	INX 	H
+0182: 	MOV 	C, M
+0183: 	CPI 	#$0b
+0185: 	JM 		$0194
+0188: 	SBI 	#$0b
+018a: 	MOV 	E, A
+018b: 	MOV 	A, B
+018c: 	ADI 	#$10
+018e: 	MOV 	B, A
+018f: 	MOV 	A, E
+0190: 	INR 	D
+0191: 	JMP 	$0183
+0194: 	MOV 	L, B
+0195: 	ANA 	A
+0196: 	RZ 
+0197: 	MOV 	E, A
+0198: 	MOV 	A, C
+0199: 	ADI 	#$10
+019b: 	MOV 	C, A
+019c: 	MOV 	A, E
+019d: 	DCR 	A
+019e: 	JMP 	$0195
+01a1: 	DCR 	D
+01a2: 	JZ 		$01cd
+01a5: 	LXI 	H, #$2006
+01a8: 	MVI 	M, #$00
+01aa: 	INX 	H
+01ab: 	MOV 	C, M
+01ac: 	MVI 	M, #$00
+01ae: 	CALL 	$01d9
+01b1: 	LXI 	H, #$2005
+01b4: 	MOV 	A, M
+01b5: 	INR 	A
+01b6: 	ANI 	#$01
+01b8: 	MOV 	M, A
+01b9: 	XRA 	A
+01ba: 	LXI 	H, #$2067
+01bd: 	MOV 	H, M
+01be: 	RET 
+01bf: 	NOP
+01c0: 	LXI 	H, #$2100
+01c3: 	MVI 	B, #$37
+01c5: 	MVI 	M, #$01
+01c7: 	INX 	H
+01c8: 	DCR 	B
+01c9: 	JNZ 	$01c5
+01cc: 	RET 
+01cd: 	POP 	H 
+01ce: 	RET 
+01cf: 	MVI 	A, #$01
+01d1: 	MVI 	B, #$e0
+01d3: 	LXI 	H, #$2402
+01d6: 	JMP 	$14cc
+01d9: 	INX 	H
+01da: 	MOV 	B, M
+01db: 	INX 	H
+01dc: 	MOV 	A, C
+01dd: 	ADD 	M
+01de: 	MOV 	M, A
+01df: 	INX 	H
+01e0: 	MOV 	A, B
+01e1: 	ADD 	M
+01e2: 	MOV 	M, A
+01e3: 	RET 
+01e4: 	MVI 	B, #$c0
+01e6: 	LXI 	D, #$1b00
+01e9: 	LXI 	H, #$2000
+01ec: 	JMP 	$1a32
+01ef: 	LXI 	H, #$2142
+01f2: 	JMP 	$01f8
+01f5: 	LXI 	H, #$2242
+01f8: 	MVI 	C, #$04
+01fa: 	LXI 	D, #$1d20
+01fd: 	PUSH 	D
+01fe: 	MVI 	B, #$2c
+0200: 	CALL 	$1a32
+0203: 	POP 	D
+0204: 	DCR 	C
+0205: 	JNZ 	$01fd
+0208: 	RET 
+0209: 	MVI 	A, #$01
+020b: 	JMP 	$021b
+020e: 	MVI 	A, #$01
+0210: 	JMP 	$0214
+0213: 	XRA 	A
+0214: 	LXI 	D, #$2242
+0217: 	JMP 	$021e
+021a: 	XRA 	A
+021b: 	LXI 	D, #$2142
+021e: 	STA 	$2081
+0221: 	LXI 	B, #$1602
+0224: 	LXI 	H, #$2806
+0227: 	MVI 	A, #$04
+0229: 	PUSH 	PSW
+022a: 	PUSH 	B
+022b: 	LDA 	$2081
+022e: 	ANA 	A
+022f: 	JNZ 	$0242
+0232: 	CALL 	$1a69
+0235: 	POP 	B 
+0236: 	POP 	PSW 
+0237: 	DCR 	A
+0238: 	RZ 
+0239: 	PUSH 	D
+023a: 	LXI 	D, #$02e0
+023d: 	DAD 	D
+023e: 	POP 	D
+023f: 	JMP 	$0229
+0242: 	CALL 	$147c
+0245: 	JMP 	$0235
+0248: 	LXI 	H, #$2010
+024b: 	MOV 	A, M
+024c: 	CPI 	#$ff
+024e: 	RZ 
+024f: 	CPI 	#$fe
+0251: 	JZ 		$0281
+0254: 	INX 	H
+0255: 	MOV 	B, M
+0256: 	MOV 	C, A
+0257: 	DCX 	B
+0258: 	MOV 	A, C
+0259: 	JNZ 	$0277
+025c: 	INX 	H
+025d: 	MOV 	A, M
+025e: 	ANA 	A
+025f: 	JNZ 	$0288
+0262: 	INX 	H
+0263: 	MOV 	E, M
+0264: 	INX 	H
+0265: 	MOV 	D, M
+0266: 	PUSH 	H
+0267: 	XCHG 
+0268: 	PUSH 	H
+0269: 	LXI 	H, #$026f
+026c: 	XTHL 
+026d: 	PUSH 	D
+026e: 	PCHL 
+026f: 	POP 	H 
+0270: 	LXI 	D, #$000c
+0273: 	DAD 	D
+0274: 	JMP 	$024b
+0277: 	DCR 	B
+0278: 	INR 	B
+0279: 	JNZ 	$027d
+027c: 	DCR 	A
+027d: 	DCR 	B
+027e: 	MOV 	M, B
+027f: 	DCX 	H
+0280: 	MOV 	M, A
+0281: 	LXI 	D, #$0010
+0284: 	DAD 	D
+0285: 	JMP 	$024b
+0288: 	DCR 	M
+0289: 	DCX 	H
+028a: 	DCX 	H
+028b: 	JMP 	$0281
+028e: 	POP 	H 
+028f: 	INX 	H
+0290: 	MOV 	A, M
+0291: 	CPI 	#$ff
+0293: 	JZ 		$033b
+0296: 	INX 	H
+0297: 	DCR 	M
+0298: 	RNZ 
+0299: 	MOV 	B, A
+029a: 	XRA 	A
+029b: 	STA 	$2068
+029e: 	STA 	$2069
+02a1: 	MVI 	A, #$30
+02a3: 	STA 	$206a
+02a6: 	MOV 	A, B
+02a7: 	MVI 	M, #$05
+02a9: 	INX 	H
+02aa: 	DCR 	M
+02ab: 	JNZ 	$039b
+02ae: 	LHLD 	$201a
+02b1: 	MVI 	B, #$10
+02b3: 	CALL 	$1424
+02b6: 	LXI 	H, #$2010
+02b9: 	LXI 	D, #$1b10
+02bc: 	MVI 	B, #$10
+02be: 	CALL 	$1a32
+02c1: 	MVI 	B, #$00
+02c3: 	CALL 	$19dc
+02c6: 	LDA 	$206d
+02c9: 	ANA 	A
+02ca: 	RNZ 
+02cb: 	LDA 	$20ef
+02ce: 	ANA 	A
+02cf: 	RZ 
+02d0: 	LXI 	$2400
+02d3: 	EI 
+02d4: 	CALL 	$19d7
+02d7: 	CALL 	$092e
+02da: 	ANA 	A
+02db: 	JZ 		$166d
+02de: 	CALL 	$18e7
+02e1: 	MOV 	A, M
+02e2: 	ANA 	A
+02e3: 	JZ 		$032c
+02e6: 	LDA 	$20ce
+02e9: 	ANA 	A
+02ea: 	JZ 		$032c
+02ed: 	LDA 	$2067
+02f0: 	PUSH 	PSW
+02f1: 	RRC
+02f2: 	JC 		$0332
+02f5: 	CALL 	$020e
+02f8: 	CALL 	$0878
+02fb: 	MOV 	M, E
+02fc: 	INX 	H
+02fd: 	MOV 	M, D
+02fe: 	DCX 	H
+02ff: 	DCX 	H
+0300: 	MOV 	M, B
+0301: 	NOP
+0302: 	CALL 	$01e4
+0305: 	POP 	PSW 
+0306: 	RRC
+0307: 	MVI 	A, #$21
+0309: 	MVI 	B, #$00
+030b: 	JNC 	$0312
+030e: 	MVI 	B, #$20
+0310: 	MVI 	A, #$22
+0312: 	STA 	$2067
+0315: 	CALL 	$0ab6
+0318: 	XRA 	A
+0319: 	STA 	$2011
+031c: 	MOV 	A, B
+031d: 	OUT 	#$05
+031f: 	INR 	A
+0320: 	STA 	$2098
+0323: 	CALL 	$09d6
+0326: 	CALL 	$1a7f
+0329: 	JMP 	$07f9
+032c: 	CALL 	$1a7f
+032f: 	JMP 	$0817
+0332: 	CALL 	$0209
+0335: 	JMP 	$02f8
+0338: 	NOP
+0339: 	NOP
+033a: 	NOP
+033b: 	LXI 	H, #$2068
+033e: 	MVI 	M, #$01
+0340: 	INX 	H
+0341: 	MOV 	A, M
+0342: 	ANA 	A
+0343: 	JMP 	$03b0
+0346: 	NOP
+0347: 	DCX 	H
+0348: 	MVI 	M, #$01
+034a: 	LDA 	$201b
+034d: 	MOV 	B, A
+034e: 	LDA 	$20ef
+0351: 	ANA 	A
+0352: 	JNZ 	$0363
+0355: 	LDA 	$201d
+0358: 	RRC
+0359: 	JC 		$0381
+035c: 	RRC
+035d: 	JC 		$038e
+0360: 	JMP 	$036f
+0363: 	CALL 	$17c0
+0366: 	RLC
+0367: 	RLC
+0368: 	JC 		$0381
+036b: 	RLC
+036c: 	JC 		$038e
+036f: 	LXI 	H, #$2018
+0372: 	CALL 	$1a3b
+0375: 	CALL 	$1a47
+0378: 	CALL 	$1439
+037b: 	MVI 	A, #$00
+037d: 	STA 	$2012
+0380: 	RET 
+0381: 	MOV 	A, B
+0382: 	CPI 	#$d9
+0384: 	JZ 		$036f
+0387: 	INR 	A
+0388: 	STA 	$201b
+038b: 	JMP 	$036f
+038e: 	MOV 	A, B
+038f: 	CPI 	#$30
+0391: 	JZ 		$036f
+0394: 	DCR 	A
+0395: 	STA 	$201b
+0398: 	JMP 	$036f
+039b: 	INR 	A
+039c: 	ANI 	#$01
+039e: 	STA 	$2015
+03a1: 	RLC
+03a2: 	RLC
+03a3: 	RLC
+03a4: 	RLC
+03a5: 	LXI 	H, #$1c70
+03a8: 	ADD 	L
+03a9: 	MOV 	L, A
+03aa: 	SHLD 	$2018
+03ad: 	JMP 	$036f
+03b0: 	JNZ 	$034a
+03b3: 	INX 	H
+03b4: 	DCR 	M
+03b5: 	JNZ 	$034a
+03b8: 	JMP 	$0346
+03bb: 	LXI 	D, #$202a
+03be: 	CALL 	$1a06
+03c1: 	POP 	H 
+03c2: 	RNC 	D
+03c3: 	INX 	H
+03c4: 	MOV 	A, M
+03c5: 	ANA 	A
+03c6: 	RZ 
+03c7: 	CPI 	#$01
+03c9: 	JZ 		$03fa
+03cc: 	CPI 	#$02
+03ce: 	JZ 		$040a
+03d1: 	INX 	H
+03d2: 	CPI 	#$03
+03d4: 	JNZ 	$042a
+03d7: 	DCR 	M
+03d8: 	JZ 		$0436
+03db: 	MOV 	A, M
+03dc: 	CPI 	#$0f
+03de: 	RNZ 
+03df: 	PUSH 	H
+03e0: 	CALL 	$0430
+03e3: 	CALL 	$1452
+03e6: 	POP 	H 
+03e7: 	INX 	H
+03e8: 	INR 	M
+03e9: 	INX 	H
+03ea: 	INX 	H
+03eb: 	DCR 	M
+03ec: 	DCR 	M
+03ed: 	INX 	H
+03ee: 	DCR 	M
+03ef: 	DCR 	M
+03f0: 	DCR 	M
+03f1: 	INX 	H
+03f2: 	MVI 	M, #$08
+03f4: 	CALL 	$0430
+03f7: 	JMP 	$1400
+03fa: 	INR 	A
+03fb: 	MOV 	M, A
+03fc: 	LDA 	$201b
+03ff: 	ADI 	#$08
+0401: 	STA 	$202a
+0404: 	CALL 	$0430
+0407: 	JMP 	$1400
+040a: 	CALL 	$0430
+040d: 	PUSH 	D
+040e: 	PUSH 	H
+040f: 	PUSH 	B
+0410: 	CALL 	$1452
+0413: 	POP 	B 
+0414: 	POP 	H 
+0415: 	POP 	D
+0416: 	LDA 	$202c
+0419: 	ADD 	L
+041a: 	MOV 	L, A
+041b: 	STA 	$2029
+041e: 	CALL 	$1491
+0421: 	LDA 	$2061
+0424: 	ANA 	A
+0425: 	RZ 
+0426: 	STA 	$2002
+0429: 	RET 
+042a: 	CPI 	#$05
+042c: 	RZ 
+042d: 	JMP 	$0436
+0430: 	LXI 	H, #$2027
+0433: 	JMP 	$1a3b
+0436: 	CALL 	$0430
+0439: 	CALL 	$1452
+043c: 	LXI 	H, #$2025
+043f: 	LXI 	D, #$1b25
+0442: 	MVI 	B, #$07
+0444: 	CALL 	$1a32
+0447: 	LHLD 	$208d
+044a: 	INR 	L
+044b: 	MOV 	A, L
+044c: 	CPI 	#$63
+044e: 	JC 		$0453
+0451: 	MVI 	$2254
+0454: 	ADC 	L
+0455: 	NOP
+0456: 	LHLD 	$208f
+0459: 	INR 	L
+045a: 	SHLD 	$208f
+045d: 	LDA 	$2084
+0460: 	ANA 	A
+0461: 	RNZ 
+0462: 	MOV 	A, M
+0463: 	ANI 	#$01
+0465: 	LXI 	B, #$0229
+0468: 	JNZ 	$046e
+046b: 	LXI 	B, #$fee0
+046e: 	LXI 	H, #$208a
