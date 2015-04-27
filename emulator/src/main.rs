@@ -4,6 +4,9 @@
 extern crate rustc_serialize;
 extern crate docopt;
 
+use std::io::prelude::*;
+use std::fs::{File};
+
 // docopt!(Args derive Debug, "
 //   8080 Emulator – let's you emulat an intel 8080 CPU
 
@@ -54,62 +57,73 @@ fn main() {
   // }
 
   println!("running emulator");
-  let mut cpuState = initCpu();
-
-  println!("{:?}", &cpuState.a);
+  let mut cpu_state = init_cpu();
+  load_rom_to_memory(&mut cpu_state);
 
   let mut done: i32 = 0;
 
-  while(done == 0) {
-  	println!("emulate");
-  	done = emulate(&mut cpuState);
+  while done == 0 {
+    // println!("emulate");
+    done = emulate(&mut cpu_state);
+  }
+}
+
+
+
+fn load_rom_to_memory(cpu_state: &mut CpuState) {
+
+  let mut input_file = File::open("invaders.h").unwrap();
+
+  let mut buffer: Vec<u8> = Vec::new();
+  let file_size = input_file.read_to_end(&mut buffer).unwrap();
+
+  for (idx, byte) in buffer.iter().enumerate() {
+    cpu_state.memory[idx] = byte.clone();
+  }
+}
+
+fn init_cpu() -> CpuState {
+
+  let con_code = ConditionCode{ z:0x00, s:0x00, p:0x00, cy:0x00, ac: 0x00, pad: 0x00, };
+
+  let cpu_state = CpuState{ 
+    a:0x00,
+    b:0x00,
+    c:0x00,
+    d:0x00,
+    e:0x00,
+    h:0x00,
+    l:0x00,
+    sp:0x0000,
+    pc:0x0000,
+    memory: [0; 0x10000],
+    cc: con_code,
+    int_enable: 0,
+  };
+
+  cpu_state
+}
+
+fn emulate(cpu_state: &mut CpuState) -> i32 {
+
+  // println!("run emulator");
+
+  if cpu_state.pc == 0x2000 {
+    println!("no more code to execute");
+    return 1;
   }
 
+  // println!("code left");
 
-}
+  let operation_code = cpu_state.memory[cpu_state.pc as usize];
 
-fn initCpu() -> CpuState {
+  match operation_code {
+    //NOP
+    0x00 => { println!("NOP"); },
+    _ => panic!("the opcode: {} is not yet implemented, shutting down vm.", operation_code),
+  }
 
-	let con_code = ConditionCode{ z:0x00, s:0x00, p:0x00, cy:0x00, ac: 0x00, pad: 0x00, };
+  cpu_state.pc+=1;
 
-	let cpu_state = CpuState{ 
-		a:0x00,
-		b:0x00,
-		c:0x00,
-		d:0x00,
-		e:0x00,
-		h:0x00,
-		l:0x00,
-		sp:0x0000,
-		pc:0x0000,
-		memory: [0; 0x10000],
-		cc: con_code,
-		int_enable: 0,
-	};
-
-	cpu_state
-}
-
-fn emulate(mut cpu_state: &mut CpuState) -> i32 {
-
-	println!("run emulator");
-
-	if cpu_state.pc == 0x2000 {
-		println!("no more code to execute");
-		return 1;
-	}
-
-	println!("code left");
-
-	let operation_code = cpu_state.memory[cpu_state.pc as usize];
-
-	match operation_code {
-		//NOP
-		0x00 => { println!("NOP"); },
-		_ => panic!("the opcode: {} is not jet implemented, shutting down vm.", operation_code),
-	}
-
-	cpu_state.pc+=1;
-
-	return 0;
+  return 0;
 }

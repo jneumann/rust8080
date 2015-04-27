@@ -11,5 +11,5 @@
 */target/
 
 #exclude invaders image .. legal issues?
-disassembler/invaders.*
-emulator/invaders.*
+invaders.*
+

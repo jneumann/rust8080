@@ -30,7 +30,7 @@ fn main() {
   let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
   match args {
     Args { flag_version: true, .. } => println!("version {}", VERSION),
-    Args {flag_input: input_file_path, flag_output: output_file_path, ..} => decode_file(input_file_path, output_file_path),
+    Args { flag_input: input_file_path, flag_output: output_file_path, .. } => decode_file(input_file_path, output_file_path),
   }
 }
 
