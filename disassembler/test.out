@@ -402,7 +402,7 @@
 02cb: 	LDA 	$20ef
 02ce: 	ANA 	A
 02cf: 	RZ 
-02d0: 	LXI 	$2400
+02d0: 	LXI 	SP,$2400
 02d3: 	EI 
 02d4: 	CALL 	$19d7
 02d7: 	CALL 	$092e

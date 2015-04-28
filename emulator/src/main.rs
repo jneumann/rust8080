@@ -25,16 +25,23 @@ use std::fs::{File};
 // static VERSION: &'static str = "0.0.1";
 
 struct ConditionCode {
+    /// Zero: set if the result is zero
     z: u8,
+    /// Sign: set if the result is negative
     s: u8,
+    /// Parity: set if the number of 1 bits in the result is even
     p: u8,
+    /// Carry: set if the last addition operation resulted in a carry, or
+    /// if the last subtraction operation required a borrow
     cy: u8,
     ac: u8,
     pad: u8,
 }
 
 struct CpuState {
+    // Register A: primary 8-bit accumulator
     a: u8,
+    // Register B: either 8-bit single or B (BC) 16-bit register
     b: u8,
     c: u8,
     d: u8,
@@ -135,6 +142,9 @@ fn emulate(cpu_state: &mut CpuState) -> i32 {
 
     //NOP ;4c ;os=1byte
     0x00 => { operation_cycles = 4 },
+
+    // MVI B, u8  Move immediate value to B ;os=2byte
+    0x06 => { cpu_state.b = operation_arg1; cpu_state.pc+=1; }
 
     //LXI sp, u16   Load registerpair u16 immediate to stack pointer(which is u16) ;10c ;os=3byte
     0x31 => { cpu_state.sp = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); cpu_state.pc += 2; operation_cycles = 10 },
