@@ -143,14 +143,78 @@ fn emulate(cpu_state: &mut CpuState) -> i32 {
     //NOP ;4c ;os=1byte
     0x00 => { operation_cycles = 4 },
 
+    //DRC B ; 5c; os=1byte decrement register B
+    // 0x05 => { }
+
     // MVI B, u8  Move immediate value to B ;os=2byte
     0x06 => { cpu_state.b = operation_arg1; cpu_state.pc+=1; }
 
+    //LXI D, u16 ; 10c; os=3byte  load intermediate to combined register DE (just called D as 16 bit register)  
+    0x11 => { cpu_state.e = operation_arg1; cpu_state.d = operation_arg2; cpu_state.pc += 2; operation_cycles = 10; },
+
+    //INX D ;5c; os=1byte increment register DE
+    0x13 => { 
+      cpu_state.e += 1;
+      if cpu_state.e == 0 {
+        cpu_state.h += 1;
+      }
+
+      operation_cycles = 5;
+    },
+
+    //LDAX D load ; 7c; os=1byte; load memory indirect from combinded register DE (just called D as 16 bit register) to A 
+    0x1a => { 
+      let memory_offset: u16 = ((cpu_state.d as u16) << 8) | (cpu_state.e as u16); 
+      // println!("{:01$x}", memory_offset, 4);
+      // println!("{:01$x}", cpu_state.memory[memory_offset as usize], 2);
+      cpu_state.a = cpu_state.memory[memory_offset as usize];
+      operation_cycles = 7; 
+    },
+
+    //LXI H, u16 ; 10c; os=3byte  load intermediate to combined register HL (just called H as 16 bit register)
+    0x21 => { cpu_state.l = operation_arg1; cpu_state.h = operation_arg2; cpu_state.pc += 2; operation_cycles = 10; },
+
+    //INX H ;5c; os=1byte  increment register HL
+    0x23 => { 
+      cpu_state.l += 1; 
+      if cpu_state.l == 0 {
+        cpu_state.h += 1;
+      }
+
+      operation_cycles = 5;
+    },
+
     //LXI sp, u16   Load registerpair u16 immediate to stack pointer(which is u16) ;10c ;os=3byte
-    0x31 => { cpu_state.sp = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); cpu_state.pc += 2; operation_cycles = 10 },
+    0x31 => { cpu_state.sp = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); cpu_state.pc += 2; operation_cycles = 10; },
+
+    //MOV M,A ; 7c; os=1  move content of register A to memory location pointed by register HL 16 bit ...
+    0x77 => {  
+      let memory_offset: u16 = ((cpu_state.h as u16) << 8) | (cpu_state.l as u16);
+      cpu_state.memory[memory_offset as usize] = cpu_state.a;
+      // println!("{:01$x}", memory_offset, 4);
+      // println!("{:01$x}", cpu_state.memory[memory_offset as usize], 2);
+      operation_cycles = 7; 
+    },
 
     //JMP u16  jump to u16 adress ;10c ; os=3byte
-    0xc3 => { cpu_state.pc = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); operation_cycles = 10 },
+    0xc3 => { cpu_state.pc = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); operation_cycles = 10; },
+
+    //CALL adr u16 ;17; os=3byte
+    0xcd => {  
+      let ret: u16 = cpu_state.pc + 2; // save return adress (3 byte after this 3 byte instr.) on the stack
+      // println!("{:01$x}", (ret >> 8) as u8, 4);
+      // println!("{:01$x}", ret as u8, 4);
+      cpu_state.memory[(cpu_state.sp - 1) as usize] = (ret >> 8) as u8; // -- as u8 == & 0xff -- bitmask lower 8 bits of return addr. to write in higher stack bits
+      cpu_state.memory[(cpu_state.sp - 2) as usize] = ret as u8; // -- as u8 == & -- 0xff bitmask higher 8 bits to write to lower stack bits
+      // println!("{:01$x}", cpu_state.memory[(cpu_state.sp - 1) as usize], 2);
+      // println!("{:01$x}", cpu_state.memory[(cpu_state.sp - 2) as usize], 2);
+
+      cpu_state.sp -= 2;  // stack grows down
+      cpu_state.pc = (operation_arg2 as u16) << 8 | (operation_arg1 as u16); // jump to destination
+      
+      operation_cycles = 17;
+    },
+    
     _ => panic!("the opcode: {:01$x} is not yet implemented, shutting down vm.", operation_code, 2),
   }
   println!("z:{:?} s:{:?} p:{:?} cy:{:?} ac:{:?}",cpu_state.cc.z, cpu_state.cc.s, cpu_state.cc.p, cpu_state.cc.cy, cpu_state.cc.ac );
@@ -174,27 +238,29 @@ fn disassemble(instruction_buffer: &[u8], program_counter: u16) -> u16 {
   match operation_code {
     0x00 => { write!(&mut output, "NOP\n"); },
     0x01 => { write!(&mut output, "LXI \tB, #${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
-    0x04 => { write!(&mut output, "INR \tB\n");}
-    0x05 => { write!(&mut output, "DCR \tB\n");}
+    0x04 => { write!(&mut output, "INR \tB\n");},
+    0x05 => { write!(&mut output, "DCR \tB\n");},
     0x06 => { write!(&mut output, "MVI \tB, #${:01$x}\n", operation_arg1, 2); operation_size = 2},
     0x07 => { write!(&mut output, "RLC\n"); },
-    0x0d => { write!(&mut output, "DCR \tC\n");}
+    0x0d => { write!(&mut output, "DCR \tC\n");},
     0x0e => { write!(&mut output, "MVI \tC, #${:01$x}\n", operation_arg1, 2); operation_size = 2},
     0x0f => { write!(&mut output, "RRC\n"); },
 
     0x11 => { write!(&mut output, "LXI \tD, #${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
-    0x14 => { write!(&mut output, "INR \tD\n");}
-    0x15 => { write!(&mut output, "DCR \tD\n");}
+    0x13 => { write!(&mut output, "INX \tD\n");},
+    0x14 => { write!(&mut output, "INR \tD\n");},
+    0x15 => { write!(&mut output, "DCR \tD\n");},
     0x16 => { write!(&mut output, "MVI \tD, #${:01$x}\n", operation_arg1, 2); operation_size = 2},
-    0x19 => { write!(&mut output, "DAD \tD\n");}
+    0x19 => { write!(&mut output, "DAD \tD\n");},
+    0x1a => { write!(&mut output, "LDAX \tD\n");},
 
     0x20 => { write!(&mut output, "NOP\n"); },
     0x21 => { write!(&mut output, "LXI \tH, #${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
     0x22 => { write!(&mut output, "SHLD \t${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
-    0x23 => { write!(&mut output, "INX \tH\n");}
+    0x23 => { write!(&mut output, "INX \tH\n");},
     0x27 => { write!(&mut output, "DAA \n"); },
     0x2a => { write!(&mut output, "LHLD \t${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
-    0x2b => { write!(&mut output, "DCX \tH\n");}
+    0x2b => { write!(&mut output, "DCX \tH\n");},
     0x2c => { write!(&mut output, "INR \tL\n");},
     0x2e => { write!(&mut output, "MVI \t${:02$x}{:02$x}\n", operation_arg2, operation_arg1, 2); operation_size = 3 },
 
@@ -208,40 +274,41 @@ fn disassemble(instruction_buffer: &[u8], program_counter: u16) -> u16 {
     0x3d => { write!(&mut output, "DCR \tA\n");}
     0x3e => { write!(&mut output, "MVI \tA, #${:01$x}\n", operation_arg1, 2); operation_size = 2},
 
-    0x46 => { write!(&mut output, "MOV \tB, M\n");}
-    0x47 => { write!(&mut output, "MOV \tB, A\n");}
-    0x4e => { write!(&mut output, "MOV \tC, M\n");}
-    0x4f => { write!(&mut output, "MOV \tC, A\n");}
+    0x46 => { write!(&mut output, "MOV \tB, M\n");},
+    0x47 => { write!(&mut output, "MOV \tB, A\n");},
+    0x4e => { write!(&mut output, "MOV \tC, M\n");},
+    0x4f => { write!(&mut output, "MOV \tC, A\n");},
 
-    0x56 => { write!(&mut output, "MOV \tD, M\n");}
-    0x5e => { write!(&mut output, "MOV \tE, M\n");}
-    0x5f => { write!(&mut output, "MOV \tE, A\n");}
+    0x56 => { write!(&mut output, "MOV \tD, M\n");},
+    0x5e => { write!(&mut output, "MOV \tE, M\n");},
+    0x5f => { write!(&mut output, "MOV \tE, A\n");},
 
-    0x61 => { write!(&mut output, "MOV \tH, C\n");}
-    0x66 => { write!(&mut output, "MOV \tH, M\n");}
-    0x67 => { write!(&mut output, "MOV \tH, A\n");}
-    0x68 => { write!(&mut output, "MOV \tL, B\n");}
-    0x6f => { write!(&mut output, "MOV \tL, A\n");}
+    0x61 => { write!(&mut output, "MOV \tH, C\n");},
+    0x66 => { write!(&mut output, "MOV \tH, M\n");},
+    0x67 => { write!(&mut output, "MOV \tH, A\n");},
+    0x68 => { write!(&mut output, "MOV \tL, B\n");},
+    0x6f => { write!(&mut output, "MOV \tL, A\n");},
 
-    0x70 => { write!(&mut output, "MOV \tM, B\n");}
-    0x72 => { write!(&mut output, "MOV \tM, D\n");}
-    0x73 => { write!(&mut output, "MOV \tM, E\n");}
-    0x77 => { write!(&mut output, "MOV \tM, A\n");}
-    0x78 => { write!(&mut output, "MOV \tA, B\n");}
-    0x79 => { write!(&mut output, "MOV \tA, C\n");}
-    0x7a => { write!(&mut output, "MOV \tA, D\n");}
-    0x7b => { write!(&mut output, "MOV \tA, E\n");}
-    0x7d => { write!(&mut output, "MOV \tA, L\n");}
-    0x7e => { write!(&mut output, "MOV \tA, M\n");}
+    0x70 => { write!(&mut output, "MOV \tM, B\n");},
+    0x72 => { write!(&mut output, "MOV \tM, D\n");},
+    0x73 => { write!(&mut output, "MOV \tM, E\n");},
+    0x77 => { write!(&mut output, "MOV \tM, A\n");},
+    0x78 => { write!(&mut output, "MOV \tA, B\n");},
+    0x79 => { write!(&mut output, "MOV \tA, C\n");},
+    0x7a => { write!(&mut output, "MOV \tA, D\n");},
+    0x7b => { write!(&mut output, "MOV \tA, E\n");},
+    0x7d => { write!(&mut output, "MOV \tA, L\n");},
+    0x7e => { write!(&mut output, "MOV \tA, M\n");},
 
-    0x85 => { write!(&mut output, "ADD \tL\n");}
-    0x86 => { write!(&mut output, "ADD \tM\n");}
-    0x8d => { write!(&mut output, "ADC \tL\n");}
+    0x85 => { write!(&mut output, "ADD \tL\n");},
+    0x86 => { write!(&mut output, "ADD \tM\n");},
+    0x8d => { write!(&mut output, "ADC \tL\n");},
 
-    0xa7 => { write!(&mut output, "ANA \tA\n");}
-    0xaf => { write!(&mut output, "XRA \tA\n");}
+    0xa1 => { write!(&mut output, "ANA \tC\n");},
+    0xa7 => { write!(&mut output, "ANA \tA\n");},
+    0xaf => { write!(&mut output, "XRA \tA\n");},
 
-    0xb0 => { write!(&mut output, "DCX \tB\n");}
+    0xb0 => { write!(&mut output, "DCX \tB\n");},
 
     0xc0 => { write!(&mut output, "RNZ \n"); },
     0xc1 => { write!(&mut output, "POP \tB \n"); },
